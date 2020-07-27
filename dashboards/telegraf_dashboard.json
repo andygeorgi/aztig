@@ -15252,7 +15252,7 @@
         "name": "ncores",
         "options": [],
         "query": "select n_cpus from system",
-        "refresh": 1,
+        "refresh": 2,
         "regex": "",
         "skipUrlSync": false,
         "sort": 3,
