@@ -64,7 +64,7 @@ echo "Push right config .... "
 cp /etc/telegraf/telegraf.conf /etc/telegraf/telegraf.conf.origin
 cp $CYCLECLOUD_SPEC_PATH/files/config/telegraf.conf /etc/telegraf/
 
-cat << EOF >> /etc/telegraf/telegraf.
+cat << EOF >> /etc/telegraf/telegraf.conf
 
 [[outputs.influxdb]]
   urls = ["http://$GRAFANA_SERVER:8086"]
