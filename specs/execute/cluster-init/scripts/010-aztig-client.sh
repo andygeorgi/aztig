@@ -59,44 +59,10 @@ else
   exit 1
 fi  
 
-
 echo "Push right config .... "
 # Update telegraph.conf
 cp /etc/telegraf/telegraf.conf /etc/telegraf/telegraf.conf.origin
-
-cat << EOF > /etc/telegraf/telegraf.conf
-[global_tags]
-[agent]
-  interval = "10s"
-  round_interval = true
-  metric_batch_size = 1000
-  metric_buffer_limit = 10000
-  collection_jitter = "0s"
-  flush_interval = "10s"
-  flush_jitter = "0s"
-  precision = ""
-  hostname = ""
-  omit_hostname = false
-[[outputs.influxdb]]
-  urls = ["http://$GRAFANA_SERVER:8086"]
-  database = "monitor"
-  username = "$INFLUXDB_USER"
-  password = "$INFLUXDB_PWD"
-[[inputs.cpu]]
-  percpu = true
-  totalcpu = true
-  collect_cpu_time = false
-  report_active = false
-[[inputs.disk]]
-  ignore_fs = ["tmpfs", "devtmpfs", "devfs", "iso9660", "overlay", "aufs", "squashfs"]
-[[inputs.diskio]]
-[[inputs.kernel]]
-[[inputs.mem]]
-[[inputs.processes]]
-[[inputs.swap]]
-[[inputs.system]]
-[[inputs.net]]
-EOF
+cp $CYCLECLOUD_SPEC_PATH/files/config/telegraf.conf /etc/telegraf/
 
 echo "#### Starting Telegraf services:"
 systemctl daemon-reload
