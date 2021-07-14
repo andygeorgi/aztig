@@ -58,6 +58,5 @@ EOF
 
 echo "#### Starting Telegraf services:"
 service telegraf start
-service telegraf status
 
 echo "### Finished Telegraf setup"

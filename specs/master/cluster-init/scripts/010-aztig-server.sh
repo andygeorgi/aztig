@@ -59,7 +59,6 @@ fi
 
 echo "#### Starting InfluxDB services"
 service influxdb start
-service influxdb status
 
 echo "#### Starting Grafana services"
 systemctl daemon-reload
