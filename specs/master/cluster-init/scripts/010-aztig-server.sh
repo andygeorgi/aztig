@@ -22,29 +22,23 @@ if [[ $os = *CentOS* ]]
 then 
 
   echo "### You are running on CentOS"
-  echo "### Copy repo files for InfluxDB and Grafana"
-  cp -r $CYCLECLOUD_SPEC_PATH/files/yum.repos.d/* /etc/yum.repos.d/
-
   echo "### InfluxDB installation"
-  yum -y install influxdb
+  wget https://dl.influxdata.com/influxdb/releases/influxdb-1.8.6.x86_64.rpm
+  yum localinstall -y influxdb-1.8.6.x86_64.rpm
 
+  echo "### Copy repo files for Grafana"
+  cp $CYCLECLOUD_SPEC_PATH/files/yum.repos.d/grafana.repo /etc/yum.repos.d/
+  
   echo "### Grafana installation"
   yum -y install grafana
 
 elif [[ $os = *Ubuntu* ]]
 then 
   echo "### You are running on Ubuntu"
-  echo "### Config repo for InfluxDB"
-  #Add key of archive
-  wget -qO- https://repos.influxdata.com/influxdb.key | apt-key add -
-
-  #Add repository and update package sources
-  source /etc/lsb-release
-  echo "deb https://repos.influxdata.com/${DISTRIB_ID,,} ${DISTRIB_CODENAME} stable" | tee /etc/apt/sources.list.d/influxdb.list
-  apt update
 
   echo "### InfluxDB installation"
-  apt install -y influxdb
+  wget https://dl.influxdata.com/influxdb/releases/influxdb_1.8.6_amd64.deb
+  dpkg -i influxdb_1.8.6_amd64.deb
 
   echo "### Config repo for Grafana"
   apt install -y apt-transport-https
@@ -64,11 +58,10 @@ else
 fi
 
 echo "#### Starting InfluxDB services"
-systemctl daemon-reload
-systemctl start influxdb
-systemctl enable influxdb
+service influxdb start
 
 echo "#### Starting Grafana services"
+systemctl daemon-reload
 systemctl start grafana-server
 systemctl enable grafana-server
 
@@ -99,4 +92,4 @@ echo "### Write Grafana server IP to a shared directory (to be read from clients
 mkdir -p $GRAFANA_SHARED/grafana
 hostname -i > $GRAFANA_SHARED/grafana/grafana_server.conf
 
-echo "### Finished Grafana server setup with Telegraf and InfluxDB"
+echo "### Finished Grafana server setup with InfluxDB"

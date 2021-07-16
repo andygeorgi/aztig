@@ -27,33 +27,16 @@ os=$(awk -F= '/^NAME/{print $2}' /etc/os-release)
 if [[ $os = *CentOS* ]]
 then 
   echo "You are running on CentOS"
-  echo "#### Configuration repo for InfluxDB:"
-  cat <<EOF | tee /etc/yum.repos.d/influxdb.repo
-[influxdb]
-name = InfluxDB Repository - RHEL \$releasever
-baseurl = https://repos.influxdata.com/centos/\$releasever/\$basearch/stable
-enabled = 1
-gpgcheck = 1
-gpgkey = https://repos.influxdata.com/influxdb.key
-EOF
-
   echo "#### Telegraf Installation:"
-  yum -y install telegraf
+  wget https://dl.influxdata.com/telegraf/releases/telegraf-1.19.1-1.x86_64.rpm
+  yum localinstall -y telegraf-1.19.1-1.x86_64.rpm
 
 elif [[ $os = *Ubuntu* ]]
 then
   echo "You are running on Ubuntu"
-  echo "### Config repo for InfluxDB"
-  #Add key of archive
-  wget -qO- https://repos.influxdata.com/influxdb.key | apt-key add -
-
-  #Add repository and update package sources
-  source /etc/lsb-release
-  echo "deb https://repos.influxdata.com/${DISTRIB_ID,,} ${DISTRIB_CODENAME} stable" | tee /etc/apt/sources.list.d/influxdb.list
-  apt update
-
   echo "### Telegraf Install:"
-  apt install -y telegraf
+  wget https://dl.influxdata.com/telegraf/releases/telegraf_1.19.1-1_amd64.deb
+  dpkg -i telegraf_1.19.1-1_amd64.deb
 else
   echo "You are running on non-support OS" 
   exit 1
@@ -74,7 +57,6 @@ cat << EOF >> /etc/telegraf/telegraf.conf
 EOF
 
 echo "#### Starting Telegraf services:"
-systemctl daemon-reload
-systemctl stop telegraf
-systemctl start telegraf
-systemctl enable telegraf
+service telegraf start
+
+echo "### Finished Telegraf setup"
